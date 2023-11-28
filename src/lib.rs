@@ -2,3 +2,4 @@
 /// It will also eliminate the need for 'crate::'.
 
 pub mod cli;
+pub mod todo;

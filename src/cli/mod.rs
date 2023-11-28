@@ -1,19 +1,22 @@
 use clap::{Parser, Subcommand};
 
+mod cmd_list;
+
 #[derive(Parser)]
-#[command(author, version, about)]
+#[command(author = "Zachary Cauchi")]
+#[command(version = "0.1.0")]
+#[command(propagate_version = true)]
 struct Cli {
     #[command(subcommand)]
-    command: Option<Commands>
+    command: Command
 }
 
 #[derive(Subcommand)]
-enum Commands {
-    List {
-        /// Filter by a substring pattern.
-        pattern: Option<String>,
-    },
+enum Command {
+    /// List all the todos.
+    List(cmd_list::Args),
 
+    /// Add a new todo.
     Add {
         /// The name of the todo to add.
         name: String,
@@ -30,17 +33,11 @@ pub fn enter_cli() {
 
     println!("Hello, world!");
 
-    let immediate_result = match &cli.command {
-        Some(Commands::List { pattern }) => {
-            println!("Listing current todos.");
-        },
+    let immediate_result = match cli.command {
+        Command::List(args) => cmd_list::run(args),
 
-        Some(Commands::Add { name, is_completed }) => {
+        Command::Add { name, is_completed } => {
             println!("Adding new todo \"{}\".", name);
-        },
-
-        None => {
-            println!("No command to run.");
         },
     };
 

@@ -6,7 +6,7 @@ use crate::todo::Todo;
 #[derive(Parser)]
 pub struct Args {
     /// Filter todos by name using a substring.
-    #[arg(long)]
+    #[arg(short, long)]
     filter: Option<String>,
 
     /// The database file to use for loading the todos.
@@ -35,6 +35,18 @@ pub fn load_todos_from_json_file(file: PathBuf) -> Result<Vec<Todo>, Box<dyn Err
     Ok(todos)
 }
 
+pub fn filter_by_name_substring(todos: Vec<Todo>, filter: Option<String>) -> Vec<Todo> {
+    match filter {
+        Some(filter) => {
+            todos
+                .into_iter()
+                .filter(|todo| todo.name.contains(&filter))
+                .collect()
+        },
+        None => todos
+    }
+}
+
 pub fn run(args: Args) {
     let Args {
         filter,
@@ -47,6 +59,10 @@ pub fn run(args: Args) {
         .unwrap_or_else(|msg| panic!("Failed to load db file: {}", msg));
 
     println!("Loaded {} todos.", todos.len());
+
+    let todos = filter_by_name_substring(todos, filter);
+
+    println!("Printing {} todos.", todos.len());
 
     println!("{}", serde_json::to_string_pretty(&todos).unwrap());
 }

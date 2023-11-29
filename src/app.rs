@@ -2,7 +2,10 @@ use std::path::{Path, PathBuf};
 
 use crate::{
     config::BucketinatorConfiguration,
-    model::{db::TodoLoader, todo::Todo},
+    model::{
+        db::{TodoLoader, TodoSaver},
+        todo::Todo,
+    },
 };
 
 pub struct App {
@@ -30,6 +33,12 @@ impl App {
         self.load_todos();
     }
 
+    pub fn save_state(&mut self) {
+        self.save_todos();
+
+        self.state_changed = false
+    }
+
     fn load_todos(&mut self) {
         println!("Loading todos from file {}", self.conf.db_file_path);
 
@@ -44,6 +53,17 @@ impl App {
         println!("Loaded {} todos.", self.todos.as_ref().unwrap().len());
     }
 
+    fn save_todos(&mut self) {
+        println!("Saving todos to file {}", self.conf.db_file_path);
+
+        let file = match Self::validate_file(self.conf.db_file_path.as_str()) {
+            Ok(file) => file,
+            Err(e) => panic!("{}", e),
+        };
+
+        TodoSaver::save_todos(file, self.get_todos());
+    }
+
     pub fn get_todos(&self) -> &Vec<Todo> {
         self.todos.as_ref().unwrap()
     }
@@ -55,6 +75,8 @@ impl App {
     pub fn add_todo(&mut self, todo: Todo) -> Option<&Todo> {
         self.get_mut_todos().push(todo);
         self.state_changed = true;
+
+        self.save_state();
 
         self.get_todos().last()
     }

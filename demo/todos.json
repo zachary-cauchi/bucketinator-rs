@@ -3,7 +3,6 @@
         "name": "Testing testing 123",
         "completed": false
     },
-
     {
         "name": "FooBar",
         "completed": true

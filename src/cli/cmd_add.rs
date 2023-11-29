@@ -1,4 +1,4 @@
-use crate::todo::Todo;
+use crate::model::todo::Todo;
 use clap::Parser;
 
 #[derive(Parser)]

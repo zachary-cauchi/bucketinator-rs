@@ -1,5 +1,10 @@
-use std::{path::{Path, PathBuf}, fs::File, io::BufReader, error::Error};
 use clap::Parser;
+use std::{
+    error::Error,
+    fs::File,
+    io::BufReader,
+    path::{Path, PathBuf},
+};
 
 use crate::todo::Todo;
 
@@ -11,7 +16,7 @@ pub struct Args {
 
     /// The database file to use for loading the todos.
     #[arg(value_parser = validate_file)]
-    file: PathBuf
+    file: PathBuf,
 }
 
 pub fn validate_file(s: &str) -> Result<PathBuf, String> {
@@ -20,7 +25,10 @@ pub fn validate_file(s: &str) -> Result<PathBuf, String> {
     if path.is_file() {
         Ok(PathBuf::from(s))
     } else {
-        Err(format!("Failed to validate file path '{}': Path is a not a file or doesn't exist.", s))
+        Err(format!(
+            "Failed to validate file path '{}': Path is a not a file or doesn't exist.",
+            s
+        ))
     }
 }
 
@@ -37,21 +45,16 @@ pub fn load_todos_from_json_file(file: PathBuf) -> Result<Vec<Todo>, Box<dyn Err
 
 pub fn filter_by_name_substring(todos: Vec<Todo>, filter: Option<String>) -> Vec<Todo> {
     match filter {
-        Some(filter) => {
-            todos
-                .into_iter()
-                .filter(|todo| todo.name.contains(&filter))
-                .collect()
-        },
-        None => todos
+        Some(filter) => todos
+            .into_iter()
+            .filter(|todo| todo.name.contains(&filter))
+            .collect(),
+        None => todos,
     }
 }
 
 pub fn run(args: Args) {
-    let Args {
-        filter,
-        file
-    } = args;
+    let Args { filter, file } = args;
 
     println!("Loading todos from file {}", file.display());
 

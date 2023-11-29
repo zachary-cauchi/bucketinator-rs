@@ -7,6 +7,7 @@ use crate::{
 
 pub struct App {
     pub is_initialized: bool,
+    state_changed: bool,
     pub todos: Option<Vec<Todo>>,
     pub conf: BucketinatorConfiguration,
 }
@@ -15,6 +16,7 @@ impl App {
     pub fn new(conf: BucketinatorConfiguration) -> App {
         App {
             is_initialized: false,
+            state_changed: false,
             todos: None,
             conf,
         }
@@ -44,6 +46,17 @@ impl App {
 
     pub fn get_todos(&self) -> &Vec<Todo> {
         self.todos.as_ref().unwrap()
+    }
+
+    fn get_mut_todos(&mut self) -> &mut Vec<Todo> {
+        self.todos.as_mut().unwrap()
+    }
+
+    pub fn add_todo(&mut self, todo: Todo) -> Option<&Todo> {
+        self.get_mut_todos().push(todo);
+        self.state_changed = true;
+
+        self.get_todos().last()
     }
 
     fn validate_file(raw_path: &str) -> Result<PathBuf, String> {

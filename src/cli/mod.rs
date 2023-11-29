@@ -35,7 +35,7 @@ pub fn enter_cli(app: &mut App) {
     let immediate_result = match cli.command {
         Command::List(args) => cmd_list::run(app, args),
 
-        Command::Add(args) => cmd_add::run(args),
+        Command::Add(args) => cmd_add::run(app, args),
     };
 
     return immediate_result;

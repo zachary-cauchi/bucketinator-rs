@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 
+use crate::app::App;
+
 mod cmd_add;
 mod cmd_list;
 
@@ -7,7 +9,7 @@ mod cmd_list;
 #[command(author = "Zachary Cauchi")]
 #[command(version = "0.1.0")]
 #[command(propagate_version = true)]
-struct Cli {
+pub struct Cli {
     #[command(subcommand)]
     command: Command,
 }
@@ -22,13 +24,16 @@ enum Command {
 }
 
 /// Main entrypoint for the cli interface.
-pub fn enter_cli() {
+pub fn enter_cli(app: &mut App) {
     let cli = Cli::parse();
 
     println!("Hello, world!");
 
+    // Initialise the app after parsing the cli (where the cli may exit early such as when printing help info).
+    app.initialize();
+
     let immediate_result = match cli.command {
-        Command::List(args) => cmd_list::run(args),
+        Command::List(args) => cmd_list::run(app, args),
 
         Command::Add(args) => cmd_add::run(args),
     };

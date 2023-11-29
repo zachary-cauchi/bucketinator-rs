@@ -1,53 +1,31 @@
-use crate::model::{db::TodoLoader, todo::Todo};
+use crate::{app::App, model::todo::Todo};
 use clap::Parser;
-use std::path::{Path, PathBuf};
 
 #[derive(Parser)]
 pub struct Args {
     /// Filter todos by name using a substring.
     #[arg(short, long)]
     filter: Option<String>,
-
-    /// The database file to use for loading the todos.
-    #[arg(value_parser = validate_file)]
-    file: PathBuf,
 }
 
-pub fn validate_file(s: &str) -> Result<PathBuf, String> {
-    let path = Path::new(s);
-
-    if path.is_file() {
-        Ok(PathBuf::from(s))
-    } else {
-        Err(format!(
-            "Failed to validate file path '{}': Path is a not a file or doesn't exist.",
-            s
-        ))
-    }
-}
-
-pub fn filter_by_name_substring(todos: Vec<Todo>, filter: Option<String>) -> Vec<Todo> {
+pub fn filter_by_name_substring(todos: &Vec<Todo>, filter: Option<String>) -> Vec<Todo> {
     match filter {
         Some(filter) => todos
-            .into_iter()
+            .iter()
             .filter(|todo| todo.name.contains(&filter))
+            .cloned()
             .collect(),
-        None => todos,
+        None => todos.clone(),
     }
 }
 
-pub fn run(args: Args) {
-    let Args { filter, file } = args;
+pub fn run(app: &App, args: Args) {
+    let Args { filter } = args;
 
-    println!("Loading todos from file {}", file.display());
+    let todos = app.get_todos();
+    let todos_filtered = filter_by_name_substring(&todos, filter);
 
-    let todos: Vec<Todo> = TodoLoader::load_todos(file);
+    println!("Printing {} todos.", todos_filtered.len());
 
-    println!("Loaded {} todos.", todos.len());
-
-    let todos = filter_by_name_substring(todos, filter);
-
-    println!("Printing {} todos.", todos.len());
-
-    println!("{}", serde_json::to_string_pretty(&todos).unwrap());
+    println!("{}", serde_json::to_string_pretty(&todos_filtered).unwrap());
 }

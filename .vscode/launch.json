@@ -19,7 +19,12 @@
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": [
+                "list"
+            ],
+            "env": {
+                "BUCKETINATOR_CONF": "demo/bucketinator.toml"
+            },
             "cwd": "${workspaceFolder}"
         },
         {

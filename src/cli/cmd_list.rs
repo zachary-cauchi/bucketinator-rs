@@ -4,36 +4,46 @@ use crate::{
     app::App,
     model::todo::{Id, Todo},
 };
-use clap::Parser;
+use clap::{Parser, ValueEnum};
+
+#[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord, ValueEnum)]
+enum CompletionFilter {
+    All,
+    CompleteOnly,
+    IncompleteOnly,
+}
 
 #[derive(Parser)]
 pub struct Args {
     /// Filter todos by name using a substring.
     #[arg(short, long)]
-    filter: Option<String>,
-}
+    name: Option<String>,
 
-pub fn filter_by_name_substring(
-    todos: &HashMap<Id, Todo>,
-    filter: Option<String>,
-) -> HashMap<Id, Todo> {
-    // TODO: Find a better way of filtering without cloning.
-    match filter {
-        Some(filter) => todos
-            .iter()
-            .filter(|(_, todo)| todo.name.contains(&filter))
-            .map(|(id, entry)| (*id, entry.clone()))
-            .collect(),
-        None => todos.clone(),
-    }
+    /// Filter by the completion status of the todo.
+    #[arg(short, long, default_value = "all")]
+    completion: Option<CompletionFilter>,
 }
 
 pub fn run(app: &App, args: Args) {
-    let Args { filter } = args;
+    let Args { name, completion } = args;
+    let (skip_filter_name, filter_name) = match name {
+        Some(n) => (n.is_empty(), n),
+        None => (true, "".to_string()),
+    };
+    let (skip_filter_completion, filter_completion) = match completion {
+        Some(CompletionFilter::IncompleteOnly) => (false, false),
+        Some(CompletionFilter::CompleteOnly) => (false, true),
+        _ => (true, false),
+    };
 
-    let todos = app.get_todos();
-    let todos_filtered = filter_by_name_substring(&todos, filter);
-    let todos_to_print: Vec<&Todo> = todos_filtered.values().collect();
+    let todos: HashMap<&Id, &Todo> = app
+        .get_todos()
+        .into_iter()
+        .filter(|(_, todo)| skip_filter_name || todo.name.contains(&filter_name))
+        .filter(|(_, todo)| skip_filter_completion || todo.completed == filter_completion)
+        .collect();
+
+    let todos_to_print: Vec<&Todo> = todos.iter().map(|(_, todo)| todo).cloned().collect();
 
     println!("Printing {} todos.", todos_to_print.len());
 

@@ -7,8 +7,8 @@ A very simple todo app built to learn Rust while not leaning on bad design in th
 ### Milestone 0 - Minimum Viable Product
 * [x] Listing todos.
 * [x] Adding todos.
-* [ ] Removing todos.
-* [ ] Filtering todos by completion.
+* [x] Removing todos.
+* [x] Filtering todos by completion.
 * [x] Filtering todos by name substring.
 * [ ] Sorting todos by completion.
 * [ ] Sorting todos by name.

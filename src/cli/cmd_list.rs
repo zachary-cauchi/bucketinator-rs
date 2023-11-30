@@ -1,4 +1,9 @@
-use crate::{app::App, model::todo::Todo};
+use std::collections::HashMap;
+
+use crate::{
+    app::App,
+    model::todo::{Id, Todo},
+};
 use clap::Parser;
 
 #[derive(Parser)]
@@ -8,12 +13,16 @@ pub struct Args {
     filter: Option<String>,
 }
 
-pub fn filter_by_name_substring(todos: &Vec<Todo>, filter: Option<String>) -> Vec<Todo> {
+pub fn filter_by_name_substring(
+    todos: &HashMap<Id, Todo>,
+    filter: Option<String>,
+) -> HashMap<Id, Todo> {
+    // TODO: Find a better way of filtering without cloning.
     match filter {
         Some(filter) => todos
             .iter()
-            .filter(|todo| todo.name.contains(&filter))
-            .cloned()
+            .filter(|(_, todo)| todo.name.contains(&filter))
+            .map(|(id, entry)| (*id, entry.clone()))
             .collect(),
         None => todos.clone(),
     }
@@ -24,8 +33,9 @@ pub fn run(app: &App, args: Args) {
 
     let todos = app.get_todos();
     let todos_filtered = filter_by_name_substring(&todos, filter);
+    let todos_to_print: Vec<&Todo> = todos_filtered.values().collect();
 
-    println!("Printing {} todos.", todos_filtered.len());
+    println!("Printing {} todos.", todos_to_print.len());
 
-    println!("{}", serde_json::to_string_pretty(&todos_filtered).unwrap());
+    println!("{}", serde_json::to_string_pretty(&todos_to_print).unwrap());
 }

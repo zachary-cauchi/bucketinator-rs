@@ -1,17 +1,21 @@
-use std::path::{Path, PathBuf};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+};
 
 use crate::{
     config::BucketinatorConfiguration,
     model::{
         db::{TodoLoader, TodoSaver},
-        todo::Todo,
+        todo::{Id, Todo},
     },
 };
 
 pub struct App {
     pub is_initialized: bool,
     state_changed: bool,
-    pub todos: Option<Vec<Todo>>,
+    last_id: Id,
+    pub todos: Option<HashMap<Id, Todo>>,
     pub conf: BucketinatorConfiguration,
 }
 
@@ -20,6 +24,7 @@ impl App {
         App {
             is_initialized: false,
             state_changed: false,
+            last_id: 1,
             todos: None,
             conf,
         }
@@ -48,6 +53,10 @@ impl App {
         };
 
         self.todos = Some(TodoLoader::load_todos(file));
+        self.last_id = self
+            .get_todos()
+            .keys()
+            .fold(self.last_id, |acc, i| acc.max(*i));
         self.is_initialized = true;
 
         println!("Loaded {} todos.", self.todos.as_ref().unwrap().len());
@@ -64,21 +73,26 @@ impl App {
         TodoSaver::save_todos(file, self.get_todos());
     }
 
-    pub fn get_todos(&self) -> &Vec<Todo> {
+    pub fn get_todos(&self) -> &HashMap<Id, Todo> {
         self.todos.as_ref().unwrap()
     }
 
-    fn get_mut_todos(&mut self) -> &mut Vec<Todo> {
+    fn get_mut_todos(&mut self) -> &mut HashMap<Id, Todo> {
         self.todos.as_mut().unwrap()
     }
 
-    pub fn add_todo(&mut self, todo: Todo) -> Option<&Todo> {
-        self.get_mut_todos().push(todo);
+    pub fn add_todo(&mut self, mut todo: Todo) -> Option<&Todo> {
+        self.last_id += 1;
+        let _ = todo.id.insert(self.last_id);
+
+        let new_id = self.last_id;
+        self.get_mut_todos().insert(new_id, todo);
+
         self.state_changed = true;
 
         self.save_state();
 
-        self.get_todos().last()
+        self.get_todos().get(&self.last_id)
     }
 
     fn validate_file(raw_path: &str) -> Result<PathBuf, String> {

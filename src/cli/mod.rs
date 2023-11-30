@@ -4,6 +4,7 @@ use crate::app::App;
 
 mod cmd_add;
 mod cmd_list;
+mod cmd_rm;
 
 #[derive(Parser)]
 #[command(author = "Zachary Cauchi")]
@@ -21,6 +22,9 @@ enum Command {
 
     /// Add a new todo.
     Add(cmd_add::Args),
+
+    /// Remove a todo.
+    Rm(cmd_rm::Args),
 }
 
 /// Main entrypoint for the cli interface.
@@ -36,6 +40,8 @@ pub fn enter_cli(app: &mut App) {
         Command::List(args) => cmd_list::run(app, args),
 
         Command::Add(args) => cmd_add::run(app, args),
+
+        Command::Rm(args) => cmd_rm::run(app, args),
     };
 
     return immediate_result;

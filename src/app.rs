@@ -95,6 +95,16 @@ impl App {
         self.get_todos().get(&self.last_id)
     }
 
+    pub fn rm_todo(&mut self, id: Id) -> Option<Todo> {
+        let todo = self.get_mut_todos().remove(&id);
+
+        if todo.is_some() {
+            self.save_state();
+        }
+
+        todo
+    }
+
     fn validate_file(raw_path: &str) -> Result<PathBuf, String> {
         let path = Path::new(raw_path);
 

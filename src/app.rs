@@ -1,17 +1,13 @@
-use std::{
-    collections::HashMap,
-    path::{Path, PathBuf},
-};
+use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
     config::BucketinatorConfiguration,
     model::{
-        db::{TodoLoader, TodoSaver},
+        db::todo_repository::TodoRepository,
         todo::{Id, Todo},
     },
 };
 
-use anyhow::{bail, Result};
 use log::info;
 
 pub struct App {
@@ -20,6 +16,7 @@ pub struct App {
     last_id: Id,
     pub todos: Option<HashMap<Id, Todo>>,
     pub conf: BucketinatorConfiguration,
+    todo_repository: Option<TodoRepository>,
 }
 
 impl App {
@@ -30,6 +27,7 @@ impl App {
             last_id: 1,
             todos: None,
             conf,
+            todo_repository: None,
         }
     }
 
@@ -38,6 +36,9 @@ impl App {
             return;
         }
 
+        self.todo_repository = Some(TodoRepository::new(PathBuf::from(
+            self.conf.db_file_path.as_str(),
+        )));
         self.load_todos();
     }
 
@@ -50,12 +51,7 @@ impl App {
     fn load_todos(&mut self) {
         info!("Loading todos from file '{}'.", self.conf.db_file_path);
 
-        let file = match Self::validate_file(self.conf.db_file_path.as_str()) {
-            Ok(file) => file,
-            Err(e) => panic!("{}", e),
-        };
-
-        self.todos = match TodoLoader::load_todos(file) {
+        self.todos = match self.todo_repository.as_ref().unwrap().load_todos() {
             Ok(todos) => Some(todos),
             Err(e) => panic!("Error loading todos from database: {:?}", e),
         };
@@ -72,12 +68,12 @@ impl App {
     fn save_todos(&mut self) {
         info!("Saving todos to file {}", self.conf.db_file_path);
 
-        let file = match Self::validate_file(self.conf.db_file_path.as_str()) {
-            Ok(file) => file,
-            Err(e) => panic!("{}", e),
-        };
-
-        match TodoSaver::save_todos(file, self.get_todos()) {
+        match self
+            .todo_repository
+            .as_ref()
+            .unwrap()
+            .save_todos(self.get_todos())
+        {
             Err(e) => panic!("Failed to save todos to database: {}", e),
             _ => (),
         }
@@ -117,18 +113,5 @@ impl App {
         info!("Removed todo {}", id);
 
         todo
-    }
-
-    fn validate_file(raw_path: &str) -> Result<PathBuf> {
-        let path = Path::new(raw_path);
-
-        if path.is_file() {
-            Ok(PathBuf::from(raw_path))
-        } else {
-            bail!(format!(
-                "Failed to validate file path '{}': Path is a not a file or doesn't exist.",
-                raw_path
-            ))
-        }
     }
 }

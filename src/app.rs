@@ -11,6 +11,8 @@ use crate::{
     },
 };
 
+use anyhow::{bail, Result};
+
 pub struct App {
     pub is_initialized: bool,
     state_changed: bool,
@@ -52,7 +54,11 @@ impl App {
             Err(e) => panic!("{}", e),
         };
 
-        self.todos = Some(TodoLoader::load_todos(file));
+        self.todos = match TodoLoader::load_todos(file) {
+            Ok(todos) => Some(todos),
+            Err(e) => panic!("Error loading todos from database: {:?}", e),
+        };
+
         self.last_id = self
             .get_todos()
             .keys()
@@ -70,7 +76,10 @@ impl App {
             Err(e) => panic!("{}", e),
         };
 
-        TodoSaver::save_todos(file, self.get_todos());
+        match TodoSaver::save_todos(file, self.get_todos()) {
+            Err(e) => panic!("Failed to save todos to database: {}", e),
+            _ => (),
+        }
     }
 
     pub fn get_todos(&self) -> &HashMap<Id, Todo> {
@@ -105,13 +114,13 @@ impl App {
         todo
     }
 
-    fn validate_file(raw_path: &str) -> Result<PathBuf, String> {
+    fn validate_file(raw_path: &str) -> Result<PathBuf> {
         let path = Path::new(raw_path);
 
         if path.is_file() {
             Ok(PathBuf::from(raw_path))
         } else {
-            Err(format!(
+            bail!(format!(
                 "Failed to validate file path '{}': Path is a not a file or doesn't exist.",
                 raw_path
             ))

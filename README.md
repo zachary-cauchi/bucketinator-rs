@@ -10,8 +10,8 @@ A very simple todo app built to learn Rust while not leaning on bad design in th
 * [x] Removing todos.
 * [x] Filtering todos by completion.
 * [x] Filtering todos by name substring.
-* [ ] Sorting todos by completion.
-* [ ] Sorting todos by name.
+* [x] Sorting todos by completion.
+* [x] Sorting todos by name.
 
 ### Milestone 1 - Internal Nice-To-Haves
 

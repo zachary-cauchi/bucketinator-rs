@@ -12,6 +12,7 @@ use crate::{
 };
 
 use anyhow::{bail, Result};
+use log::info;
 
 pub struct App {
     pub is_initialized: bool,
@@ -47,7 +48,7 @@ impl App {
     }
 
     fn load_todos(&mut self) {
-        println!("Loading todos from file {}", self.conf.db_file_path);
+        info!("Loading todos from file '{}'.", self.conf.db_file_path);
 
         let file = match Self::validate_file(self.conf.db_file_path.as_str()) {
             Ok(file) => file,
@@ -65,11 +66,11 @@ impl App {
             .fold(self.last_id, |acc, i| acc.max(*i));
         self.is_initialized = true;
 
-        println!("Loaded {} todos.", self.todos.as_ref().unwrap().len());
+        info!("Loaded {} todos.", self.todos.as_ref().unwrap().len());
     }
 
     fn save_todos(&mut self) {
-        println!("Saving todos to file {}", self.conf.db_file_path);
+        info!("Saving todos to file {}", self.conf.db_file_path);
 
         let file = match Self::validate_file(self.conf.db_file_path.as_str()) {
             Ok(file) => file,
@@ -101,6 +102,8 @@ impl App {
 
         self.save_state();
 
+        info!("Added todo {}", self.last_id);
+
         self.get_todos().get(&self.last_id)
     }
 
@@ -110,6 +113,8 @@ impl App {
         if todo.is_some() {
             self.save_state();
         }
+
+        info!("Removed todo {}", id);
 
         todo
     }

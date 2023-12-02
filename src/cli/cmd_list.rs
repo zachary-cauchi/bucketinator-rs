@@ -5,6 +5,7 @@ use crate::{
     model::todo::{Id, Todo},
 };
 use clap::{Parser, ValueEnum};
+use log::debug;
 
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Ord, ValueEnum)]
 enum CompletionFilter {
@@ -76,6 +77,8 @@ pub fn run(app: &App, args: Args) {
         _ => (true, false),
     };
 
+    debug!("Getting and filtering todos.");
+
     let todos: HashMap<&Id, &Todo> = app
         .get_todos()
         .into_iter()
@@ -85,9 +88,11 @@ pub fn run(app: &App, args: Args) {
 
     let mut todos_to_print: Vec<&Todo> = todos.iter().map(|(_, todo)| todo).cloned().collect();
 
+    debug!("Sorting todos.");
+
     sort_todos_to_print(&mut todos_to_print, sort_name, sort_completion);
 
-    println!("Printing {} todos.", todos_to_print.len());
-
+    debug!("Printing {} todos.", todos_to_print.len());
     println!("{}", serde_json::to_string_pretty(&todos_to_print).unwrap());
+    debug!("Printed {} todos.", todos_to_print.len());
 }

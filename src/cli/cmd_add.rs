@@ -1,5 +1,6 @@
 use crate::{app::App, model::todo::Todo};
 use clap::Parser;
+use log::info;
 
 #[derive(Parser)]
 pub struct Args {
@@ -21,11 +22,11 @@ pub fn run(app: &mut App, args: Args) {
 
     let todo: Todo = Todo::new(name, is_completed);
 
-    println!("Adding todo '{}' to database.", todo.name);
+    info!("Adding todo '{}' to database.", todo.name);
 
     let added_todo = app.add_todo(todo).unwrap();
 
-    println!(
+    info!(
         "Added todo '{}' with id '{}' to database.",
         added_todo.name,
         added_todo.id.unwrap()

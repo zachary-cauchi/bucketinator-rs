@@ -1,4 +1,5 @@
 use anyhow::{bail, Context, Result};
+use log::debug;
 
 use super::todo::{Id, Todo};
 use std::{
@@ -31,6 +32,8 @@ impl TodoLoader {
                 file.extension().and_then(OsStr::to_str).unwrap()
             ),
         };
+
+        debug!("Loaded database. Processing contents.");
 
         Ok(todos
             .into_iter()
@@ -65,6 +68,8 @@ impl TodoDatabase for JsonTodoDatabase {
             .with_context(|| format!("Failed to open file in read-mode ({}).", &file.display()))?;
         let db_file_buffer: BufReader<File> = BufReader::new(db_file);
 
+        debug!("Opened db file for reading. Loading database.");
+
         serde_json::from_reader(db_file_buffer).context("Deserialisation of todos db failed")
     }
 
@@ -75,6 +80,8 @@ impl TodoDatabase for JsonTodoDatabase {
         let db_file_buffer: BufWriter<File> = BufWriter::new(db_file);
 
         let values: Vec<&Todo> = todos.values().collect();
+
+        debug!("Opened db file for writing. Writing database.");
 
         serde_json::to_writer_pretty(db_file_buffer, &values)
             .context("Todos should serialise, but failed for some reason.")

@@ -31,18 +31,14 @@ enum Command {
 pub fn enter_cli(app: &mut App) {
     let cli = Cli::parse();
 
-    println!("Hello, world!");
-
     // Initialise the app after parsing the cli (where the cli may exit early such as when printing help info).
     app.initialize();
 
-    let immediate_result = match cli.command {
+    match cli.command {
         Command::List(args) => cmd_list::run(app, args),
 
         Command::Add(args) => cmd_add::run(app, args),
 
         Command::Rm(args) => cmd_rm::run(app, args),
     };
-
-    return immediate_result;
 }

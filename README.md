@@ -15,6 +15,6 @@ A very simple todo app built to learn Rust while not leaning on bad design in th
 
 ### Milestone 1 - Internal Nice-To-Haves
 
-* [ ] Better Error handling.
+* [x] Better Error handling.
 * [ ] Logging.
 * [ ] ORM library for better flexibility and reliability.

@@ -25,10 +25,10 @@ impl TodoDatabaseBuilder {
             ));
         }
 
-        let extension = db_location.extension().and_then(OsStr::to_str);
+        let extension_option = db_location.extension().and_then(OsStr::to_str);
 
         // Load the todos from the database according to the file extension.
-        match extension {
+        match extension_option {
             Some("json") => Ok(Box::new(JsonTodoDatabase::new(db_location))),
             Some(ext) => bail!("db::Unsupported db file type ({})", ext),
             None => bail!("db::No file extension found."),

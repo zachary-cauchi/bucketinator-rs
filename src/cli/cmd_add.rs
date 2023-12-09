@@ -28,7 +28,6 @@ pub fn run(app: &mut App, args: Args) {
 
     info!(
         "Added todo '{}' with id '{}' to database.",
-        added_todo.name,
-        added_todo.id.unwrap()
+        added_todo.name, added_todo.id
     );
 }

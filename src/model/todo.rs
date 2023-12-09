@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-pub type Id = usize;
+pub type Id = i32;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Todo {
-    pub id: Option<Id>,
+    pub id: Id,
     pub name: String,
     pub completed: bool,
 }
@@ -16,7 +16,7 @@ impl Todo {
         Todo: Default,
     {
         Todo {
-            id: None,
+            id: 0,
             name: name,
             completed: completed.unwrap_or(false),
         }
@@ -26,7 +26,7 @@ impl Todo {
 impl Default for Todo {
     fn default() -> Self {
         Self {
-            id: None,
+            id: 0,
             name: "".to_string(),
             completed: false,
         }

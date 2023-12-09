@@ -89,7 +89,7 @@ impl App {
 
     pub fn add_todo(&mut self, mut todo: Todo) -> Option<&Todo> {
         self.last_id += 1;
-        let _ = todo.id.insert(self.last_id);
+        todo.id = self.last_id;
 
         let new_id = self.last_id;
         self.get_mut_todos().insert(new_id, todo);

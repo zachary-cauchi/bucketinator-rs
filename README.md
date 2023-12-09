@@ -17,4 +17,4 @@ A very simple todo app built to learn Rust while not leaning on bad design in th
 
 * [x] Better Error handling.
 * [x] Logging.
-* [ ] ORM library for better flexibility and reliability.
+* [x] ORM library for better flexibility and reliability.

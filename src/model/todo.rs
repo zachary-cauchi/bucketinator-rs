@@ -1,7 +1,11 @@
+use diesel::{deserialize::Queryable, prelude::Insertable, Selectable};
 use serde::{Deserialize, Serialize};
 
 pub type Id = i32;
 
+#[derive(Queryable, Selectable, Insertable)]
+#[diesel(table_name = crate::model::db::schema::todos)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Todo {

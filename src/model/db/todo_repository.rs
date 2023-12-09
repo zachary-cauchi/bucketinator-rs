@@ -34,11 +34,7 @@ impl TodoRepository {
 
         debug!("Loaded database. Processing contents.");
 
-        Ok(todos
-            .into_iter()
-            .filter(|t| t.id.is_some())
-            .map(|t| (t.id.unwrap(), t))
-            .collect())
+        Ok(todos.into_iter().map(|t| (t.id, t)).collect())
     }
 
     pub fn save_todos(self: &Self, todos: &HashMap<Id, Todo>) -> Result<()> {

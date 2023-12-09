@@ -3,7 +3,7 @@ use std::{collections::HashMap, ffi::OsStr, path::PathBuf};
 
 use crate::model::todo::{Id, Todo};
 
-use super::json_database::JsonTodoDatabase;
+use super::{json_database::JsonTodoDatabase, sqlite_database::SQLiteTodoDatabase};
 
 pub trait TodoDatabase {
     fn load_database(self: &Self) -> Result<Vec<Todo>>;
@@ -30,6 +30,7 @@ impl TodoDatabaseBuilder {
         // Load the todos from the database according to the file extension.
         match extension_option {
             Some("json") => Ok(Box::new(JsonTodoDatabase::new(db_location))),
+            Some("db3") => Ok(Box::new(SQLiteTodoDatabase::new(db_location))),
             Some(ext) => bail!("db::Unsupported db file type ({})", ext),
             None => bail!("db::No file extension found."),
         }

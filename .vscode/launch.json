@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'bucketinator-rs'",
+            "name": "Debug CLI",
             "cargo": {
                 "args": [
                     "build",
@@ -22,6 +22,27 @@
             "args": [
                 "list"
             ],
+            "env": {
+                "BUCKETINATOR_CONF": "demo/bucketinator.toml"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug TUI",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=bucketinator-rs",
+                    "--package=bucketinator-rs"
+                ],
+                "filter": {
+                    "name": "bucketinator-rs",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
             "env": {
                 "BUCKETINATOR_CONF": "demo/bucketinator.toml"
             },

@@ -1,4 +1,4 @@
-# Bucketinator - A practice To-do CLI app
+# Rustodos - A practice To-do CLI app
 
 A very simple todo app built to learn Rust while not leaning on bad design in the process.
 

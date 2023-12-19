@@ -11,11 +11,11 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=bucketinator-rs",
-                    "--package=bucketinator-rs"
+                    "--bin=rustodos-rs",
+                    "--package=rustodos-rs"
                 ],
                 "filter": {
-                    "name": "bucketinator-rs",
+                    "name": "rustodos-rs",
                     "kind": "bin"
                 }
             },
@@ -23,7 +23,7 @@
                 "list"
             ],
             "env": {
-                "BUCKETINATOR_CONF": "demo/bucketinator.toml"
+                "RUSTODOS_CONF": "demo/rustodos.toml"
             },
             "cwd": "${workspaceFolder}"
         },
@@ -34,33 +34,33 @@
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=bucketinator-rs",
-                    "--package=bucketinator-rs"
+                    "--bin=rustodos-rs",
+                    "--package=rustodos-rs"
                 ],
                 "filter": {
-                    "name": "bucketinator-rs",
+                    "name": "rustodos-rs",
                     "kind": "bin"
                 }
             },
             "args": [],
             "env": {
-                "BUCKETINATOR_CONF": "demo/bucketinator.toml"
+                "RUSTODOS_CONF": "demo/rustodos.toml"
             },
             "cwd": "${workspaceFolder}"
         },
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'bucketinator-rs'",
+            "name": "Debug unit tests in executable 'rustodos-rs'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=bucketinator-rs",
-                    "--package=bucketinator-rs"
+                    "--bin=rustodos-rs",
+                    "--package=rustodos-rs"
                 ],
                 "filter": {
-                    "name": "bucketinator-rs",
+                    "name": "rustodos-rs",
                     "kind": "bin"
                 }
             },

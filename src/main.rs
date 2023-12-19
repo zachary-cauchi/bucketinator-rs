@@ -1,7 +1,7 @@
 use std::process::exit;
 
-use bucketinator_rs::{app::App, cli, config::BucketinatorConfiguration};
 use log::{debug, error};
+use rustodos_rs::{app::App, cli, config::RustodosConfiguration};
 
 fn main() {
     env_logger::init();
@@ -9,7 +9,7 @@ fn main() {
     debug!("Loading config.");
 
     // First load the config.
-    let conf = match BucketinatorConfiguration::get_config() {
+    let conf = match RustodosConfiguration::get_config() {
         Ok(conf) => conf,
         Err(e) => {
             error!(

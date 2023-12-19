@@ -1,7 +1,7 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
-    config::BucketinatorConfiguration,
+    config::RustodosConfiguration,
     model::{
         db::todo_repository::TodoRepository,
         todo::{Id, Todo},
@@ -15,12 +15,12 @@ pub struct App {
     state_changed: bool,
     last_id: Id,
     pub todos: Option<HashMap<Id, Todo>>,
-    pub conf: BucketinatorConfiguration,
+    pub conf: RustodosConfiguration,
     todo_repository: Option<TodoRepository>,
 }
 
 impl App {
-    pub fn new(conf: BucketinatorConfiguration) -> App {
+    pub fn new(conf: RustodosConfiguration) -> App {
         App {
             is_initialized: false,
             state_changed: false,

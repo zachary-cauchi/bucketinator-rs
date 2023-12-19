@@ -1,6 +1,6 @@
-use std::{env::args, process::exit};
+use std::process::exit;
 
-use bucketinator_rs::{app::App, cli, config::BucketinatorConfiguration, tui};
+use bucketinator_rs::{app::App, cli, config::BucketinatorConfiguration};
 use log::{debug, error};
 
 fn main() {
@@ -28,10 +28,6 @@ fn main() {
 
     debug!("App created. Loading entrypoint.");
 
-    if args().len() > 1 {
-        // Main entrypoint.
-        cli::enter_cli(&mut app);
-    } else {
-        tui::enter_tui().expect("Bucketinator crashed");
-    }
+    // Main entrypoint.
+    cli::enter_cli(&mut app);
 }
